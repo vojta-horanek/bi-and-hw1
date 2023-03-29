@@ -1,5 +1,6 @@
 package cz.cvut.fit.biand.homework1.presentation.common
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,7 +20,8 @@ fun Characters(
         modifier = modifier,
         contentPadding = PaddingValues(
             all = Space.Medium
-        )
+        ),
+        verticalArrangement = Arrangement.spacedBy(Space.Medium)
     ){
         items(characters) { character ->
             Character(

@@ -3,6 +3,8 @@ package cz.cvut.fit.biand.homework1.presentation.overview
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -13,7 +15,7 @@ import cz.cvut.fit.biand.homework1.presentation.common.Characters
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
 import cz.cvut.fit.biand.homework1.presentation.navigation.navigateToBottomNavigationItem
-import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
 
 fun NavController.navigateToOverview() {
     navigateToBottomNavigationItem(Routes.Overview())
@@ -37,8 +39,16 @@ fun NavGraphBuilder.overviewRoute(
 internal fun OverviewRoute(
     onNavigateToSearch: () -> Unit,
     onNavigateToDetail: (id: Long) -> Unit,
+    viewModel: OverviewViewModel = koinViewModel(),
 ) {
+    val state by viewModel.collectState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onIntent(OverviewViewModel.Intent.OnViewInitialized)
+    }
+
     OverviewScreen(
+        state = state,
         onSearchClick = onNavigateToSearch,
         onCharacterClick = onNavigateToDetail,
     )
@@ -46,6 +56,7 @@ internal fun OverviewRoute(
 
 @Composable
 private fun OverviewScreen(
+    state: OverviewViewModel.State,
     onSearchClick: () -> Unit,
     onCharacterClick: (id: Long) -> Unit,
 ) {
@@ -67,7 +78,7 @@ private fun OverviewScreen(
         }
     ) { innerPadding ->
         Characters(
-            characters = persistentListOf(),
+            characters = state.items,
             onCharacterClick = { id ->
                 onCharacterClick(id)
             },
