@@ -134,5 +134,5 @@ private data class BottomSheetItem(
     val onClick: NavController.() -> Unit,
 )
 
-private val BottomNavigationHeight = 56.dp
+val BottomNavigationHeight = 56.dp
 private val IconSize = 24.dp

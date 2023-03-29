@@ -15,14 +15,15 @@ fun Characters(
     characters: ImmutableList<Character>,
     onCharacterClick: (id: Long) -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(
+        all = Space.Medium
+    )
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(
-            all = Space.Medium
-        ),
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(Space.Medium)
-    ){
+    ) {
         items(characters) { character ->
             Character(
                 name = character.name.orEmpty(),
