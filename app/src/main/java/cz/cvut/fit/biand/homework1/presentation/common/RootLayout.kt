@@ -1,6 +1,5 @@
 package cz.cvut.fit.biand.homework1.presentation.common
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold

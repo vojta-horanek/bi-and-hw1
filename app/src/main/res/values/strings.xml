@@ -1,6 +1,19 @@
 <resources>
-    <string name="app_name">homework_1</string>
+    <string name="app_name">Rick and Morty</string>
     <string name="label_characters">Characters</string>
     <string name="label_favourites">Favorites</string>
     <string name="title_characters">Characters</string>
+    <string name="title_favourites">Favorites</string>
+    <string name="label_no_favourites">No favorites yet</string>
+    <string name="label_name">Name</string>
+    <string name="label_status">Status</string>
+    <string name="label_species">Species</string>
+    <string name="label_type">Type</string>
+    <string name="label_gender">Gender</string>
+    <string name="label_origin">Origin</string>
+    <string name="label_location">Location</string>
+    <string name="label_remove_favourite">Remove from favorites</string>
+    <string name="label_add_to_favorites">Add to favorites</string>
+    <string name="title_search_characters">Search characters</string>
+    <string name="label_no_characters_found">No characters found</string>
 </resources>

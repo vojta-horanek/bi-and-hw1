@@ -20,7 +20,7 @@ import cz.cvut.fit.biand.homework1.presentation.theme.Space
 fun Character(
     name: String,
     status: String,
-    avatarUri: String,
+    avatarUri: String?,
     isFavourite: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

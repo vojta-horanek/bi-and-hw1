@@ -1,10 +1,11 @@
-package cz.cvut.fit.biand.homework1.presentation.overview
+package cz.cvut.fit.biand.homework1.presentation.favourite
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -15,53 +16,40 @@ import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
 import cz.cvut.fit.biand.homework1.presentation.navigation.navigateToBottomNavigationItem
 import kotlinx.collections.immutable.persistentListOf
 
-fun NavController.navigateToOverview() {
-    navigateToBottomNavigationItem(Routes.Overview())
+fun NavController.navigateToFavourites() {
+    navigateToBottomNavigationItem(Routes.Favourites())
 }
 
-fun NavGraphBuilder.overviewRoute(
-    onNavigateToSearch: () -> Unit,
+fun NavGraphBuilder.favouritesRoute(
     onNavigateToDetail: (id: Long) -> Unit,
 ) {
     composableDestination(
-        destination = Routes.Overview
+        destination = Routes.Favourites
     ) {
-        OverviewRoute(
-            onNavigateToSearch = onNavigateToSearch,
+        FavouritesRoute(
             onNavigateToDetail = onNavigateToDetail,
         )
     }
 }
 
 @Composable
-internal fun OverviewRoute(
-    onNavigateToSearch: () -> Unit,
+internal fun FavouritesRoute(
     onNavigateToDetail: (id: Long) -> Unit,
 ) {
-    OverviewScreen(
-        onSearchClick = onNavigateToSearch,
+    FavouritesScreen(
         onCharacterClick = onNavigateToDetail,
     )
 }
 
 @Composable
-private fun OverviewScreen(
-    onSearchClick: () -> Unit,
+private fun FavouritesScreen(
     onCharacterClick: (id: Long) -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                actions = {
-                    IconButton(onClick = onSearchClick) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_search),
-                            contentDescription = null,
-                        )
-                    }
-                },
                 title = {
-                    Text(text = stringResource(R.string.title_characters))
+                    Text(text = stringResource(R.string.title_favourites))
                 },
             )
         }

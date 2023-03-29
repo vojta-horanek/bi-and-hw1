@@ -23,9 +23,9 @@ fun Characters(
     ){
         items(characters) { character ->
             Character(
-                name = character.name,
-                status = character.status,
-                avatarUri = character.avatarUri,
+                name = character.name.orEmpty(),
+                status = character.status.orEmpty(),
+                avatarUri = character.image,
                 isFavourite = character.isFavourite,
                 onClick = {
                     onCharacterClick(character.id)

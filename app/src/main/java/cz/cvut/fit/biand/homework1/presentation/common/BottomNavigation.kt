@@ -22,8 +22,10 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import cz.cvut.fit.biand.homework1.R
+import cz.cvut.fit.biand.homework1.presentation.favourite.navigateToFavourites
 import cz.cvut.fit.biand.homework1.presentation.navigation.Destination
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
+import cz.cvut.fit.biand.homework1.presentation.overview.navigateToOverview
 import cz.cvut.fit.biand.homework1.presentation.theme.Space
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -44,11 +46,17 @@ fun BottomNavigation(
                 destination = Routes.Overview,
                 label = charactersLabel,
                 image = charactersPainter,
+                onClick = {
+                    navigateToOverview()
+                }
             ),
             BottomSheetItem(
                 destination = Routes.Favourites,
                 label = favouritesLabel,
                 image = favouritePainter,
+                onClick = {
+                    navigateToFavourites()
+                }
             ),
         )
     }
@@ -85,15 +93,7 @@ fun BottomNavigation(
                 bottomSheetItems.forEach { item ->
                     BottomNavigationItem(
                         selected = currentDestination.isDestinationSelected(item.destination),
-                        onClick = {
-                            navController.navigate(item.destination()) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
+                        label = { Text(text = item.label) },
                         icon = {
                             Icon(
                                 painter = item.image,
@@ -101,7 +101,9 @@ fun BottomNavigation(
                                 modifier = Modifier.size(IconSize)
                             )
                         },
-                        label = { Text(text = item.label) },
+                        onClick = {
+                            item.onClick(navController)
+                        },
                         selectedContentColor = MaterialTheme.colors.secondary,
                         unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
                     )
@@ -126,10 +128,11 @@ private val routesWithBottomNavigation = persistentListOf<Destination>(
     Routes.Favourites,
 )
 
-data class BottomSheetItem(
+private data class BottomSheetItem(
     val destination: Destination,
     val label: String,
     val image: Painter,
+    val onClick: NavController.() -> Unit,
 )
 
 private val BottomNavigationHeight = 56.dp
