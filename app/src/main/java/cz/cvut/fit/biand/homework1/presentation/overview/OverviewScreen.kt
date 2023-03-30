@@ -90,7 +90,8 @@ private fun OverviewScreen(
                 end = Space.Medium,
                 top = Space.Medium,
                 bottom = Space.Medium + BottomNavigationHeight
-            )
+            ),
+            insideCard = true,
         )
     }
 }

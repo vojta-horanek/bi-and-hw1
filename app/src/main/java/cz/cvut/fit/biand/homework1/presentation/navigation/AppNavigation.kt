@@ -55,6 +55,9 @@ fun NavGraphBuilder.appNavGraph(
         searchRoute(
             onBackPressed = {
                 navController.popBackStack()
+            },
+            onNavigateToDetail = { id ->
+                navController.navigateToDetail(id)
             }
         )
         favouritesRoute(

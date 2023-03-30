@@ -14,6 +14,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun Characters(
     characters: ImmutableList<Character>,
     onCharacterClick: (id: Long) -> Unit,
+    insideCard: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(
         all = Space.Medium
@@ -29,6 +30,7 @@ fun Characters(
                 name = character.name.orEmpty(),
                 status = character.status.orEmpty(),
                 avatarUri = character.image,
+                insideCard = insideCard,
                 isFavourite = character.isFavourite,
                 onClick = {
                     onCharacterClick(character.id)

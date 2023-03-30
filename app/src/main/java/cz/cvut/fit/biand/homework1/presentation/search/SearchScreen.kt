@@ -1,10 +1,39 @@
 package cz.cvut.fit.biand.homework1.presentation.search
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import cz.cvut.fit.biand.homework1.R
+import cz.cvut.fit.biand.homework1.presentation.common.Characters
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
+import cz.cvut.fit.biand.homework1.presentation.theme.Space
+import org.koin.androidx.compose.koinViewModel
 
 fun NavController.navigateToSearch() {
     navigate(Routes.Search())
@@ -12,18 +41,127 @@ fun NavController.navigateToSearch() {
 
 fun NavGraphBuilder.searchRoute(
     onBackPressed: () -> Unit,
+    onNavigateToDetail: (id: Long) -> Unit,
 ) {
     composableDestination(
         destination = Routes.Search
     ) {
-        SearchRoute()
+        SearchRoute(
+            onBackPressed = onBackPressed,
+            onNavigateToDetail = onNavigateToDetail,
+        )
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-internal fun SearchRoute() {
+internal fun SearchRoute(
+    onBackPressed: () -> Unit,
+    onNavigateToDetail: (id: Long) -> Unit,
+    viewModel: SearchViewModel = koinViewModel(),
+) {
+    val state by viewModel.collectState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    SearchScreen(
+        state = state,
+        onBackPressed = onBackPressed,
+        onCharacterClick = onNavigateToDetail,
+        focusRequester = focusRequester,
+        onQueryChanged = { query ->
+            viewModel.onIntent(SearchViewModel.Intent.OnQueryChanged(query))
+        },
+        onImeAction = {
+            keyboardController?.hide()
+        }
+    )
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-private fun SearchScreen() {
+private fun SearchScreen(
+    state: SearchViewModel.State,
+    focusRequester: FocusRequester,
+    onBackPressed: () -> Unit,
+    onCharacterClick: (id: Long) -> Unit,
+    onQueryChanged: (String) -> Unit,
+    onImeAction: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                content = {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_arrow_left),
+                            contentDescription = null,
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.CenterStart,
+                            modifier = Modifier
+                                .weight(1f),
+                        ) {
+                            BasicTextField(
+                                value = state.query,
+                                onValueChange = onQueryChanged,
+                                singleLine = true,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(focusRequester),
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    imeAction = ImeAction.Search,
+                                ),
+                                keyboardActions = KeyboardActions {
+                                    onImeAction()
+                                },
+                                cursorBrush = SolidColor(MaterialTheme.colors.secondary),
+                            )
+                            if (state.isLabelVisible) {
+                                Text(
+                                    text = stringResource(R.string.title_search_characters),
+                                    modifier = Modifier
+                                )
+                            }
+                        }
+                        AnimatedVisibility(
+                            visible = state.isClearVisible,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                        ) {
+                            IconButton(onClick = onBackPressed) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_clear),
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                    }
+                },
+            )
+        }
+    ) {
+        Characters(
+            characters = state.items,
+            onCharacterClick = { id ->
+                onCharacterClick(id)
+            },
+            contentPadding = PaddingValues(
+                start = Space.Medium,
+                end = Space.Medium,
+                top = Space.Medium,
+                bottom = Space.Medium,
+            ),
+            insideCard = false,
+        )
+    }
 }

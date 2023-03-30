@@ -60,7 +60,8 @@ private fun FavouritesScreen(
                 onCharacterClick(id)
             },
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(innerPadding),
+            insideCard = true,
         )
     }
 }

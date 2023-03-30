@@ -9,6 +9,7 @@ import cz.cvut.fit.biand.homework1.infrastructure.api.CharactersApiImpl
 import cz.cvut.fit.biand.homework1.infrastructure.api.KtorClient
 import cz.cvut.fit.biand.homework1.infrastructure.source.CharactersRemoteSourceImpl
 import cz.cvut.fit.biand.homework1.presentation.overview.OverviewViewModel
+import cz.cvut.fit.biand.homework1.presentation.search.SearchViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -34,4 +35,5 @@ val domainModule = module {
 
 val presentationModule = module {
     viewModelOf(::OverviewViewModel)
+    viewModelOf(::SearchViewModel)
 }
