@@ -11,4 +11,10 @@ internal interface CharactersRepository {
     suspend fun getCharacter(
         id: Long,
     ): Result<Character>
+
+    suspend fun getFavouriteCharacters(): Result<List<Character>>
+
+    suspend fun addFavourite(character: Character)
+
+    suspend fun removeFavourite(character: Character)
 }

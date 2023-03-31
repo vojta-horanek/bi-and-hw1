@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ fun Character(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
+                        .align(Alignment.Top)
                         .size(AvatarSize)
                         .clip(MaterialTheme.shapes.small),
                 )
@@ -67,10 +69,14 @@ fun Character(
                             )
                         }
                     }
-                    Text(
-                        text = status,
-                        style = MaterialTheme.typography.body2,
-                    )
+                    CompositionLocalProvider(
+                        LocalContentAlpha provides ContentAlpha.medium
+                    ) {
+                        Text(
+                            text = status,
+                            style = MaterialTheme.typography.body2,
+                        )
+                    }
                 }
             }
         }

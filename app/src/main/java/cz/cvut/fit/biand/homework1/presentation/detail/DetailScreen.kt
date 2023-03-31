@@ -2,24 +2,22 @@ package cz.cvut.fit.biand.homework1.presentation.detail
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.Row
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
 import cz.cvut.fit.biand.homework1.presentation.common.*
-import cz.cvut.fit.biand.homework1.presentation.common.ContentState.Companion
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
 import cz.cvut.fit.biand.homework1.presentation.theme.IconSize
@@ -89,36 +87,43 @@ private fun DetailScreen(
                     }
                 },
                 title = {
-                    Text(
-                        text = state.character?.name.orEmpty(),
-                    )
+                    Crossfade(state.character?.name.orEmpty()) { name ->
+                        Text(
+                            text = name,
+                        )
+                    }
                 },
                 actions = {
-                    IconButton(
-                        onClick = onFavouriteClick,
-                        enabled = !state.loading,
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = !state.loading,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
                     ) {
-                        Crossfade(
-                            targetState = state.isFavourite
-                        ) { isFavourite ->
-                            val painter = if (isFavourite) {
-                                painterResource(R.drawable.ic_favourite_selected)
-                            } else {
-                                painterResource(R.drawable.ic_favourite)
-                            }
+                        IconButton(
+                            onClick = onFavouriteClick,
+                        ) {
+                            Crossfade(
+                                targetState = state.isFavourite
+                            ) { isFavourite ->
+                                val painter = if (isFavourite) {
+                                    painterResource(R.drawable.ic_favourite_selected)
+                                } else {
+                                    painterResource(R.drawable.ic_favourite)
+                                }
 
-                            val tint = if (isFavourite) {
-                                MaterialTheme.colors.secondary
-                            } else {
-                                MaterialTheme.colors.onPrimary
-                            }
+                                val tint = if (isFavourite) {
+                                    MaterialTheme.colors.secondary
+                                } else {
+                                    MaterialTheme.colors.onPrimary
+                                }
 
-                            Icon(
-                                painter = painter,
-                                tint = tint,
-                                contentDescription = null,
-                                modifier = Modifier.size(IconSize.Medium)
-                            )
+                                Icon(
+                                    painter = painter,
+                                    tint = tint,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(IconSize.Medium)
+                                )
+                            }
                         }
                     }
                 },

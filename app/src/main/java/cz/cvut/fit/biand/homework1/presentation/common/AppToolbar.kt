@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cz.cvut.fit.biand.homework1.presentation.theme.Space
 
 @Composable
@@ -15,11 +16,25 @@ fun AppToolbar(
     actions: (@Composable RowScope.() -> Unit)? = null,
     title: @Composable () -> Unit,
 ) {
+    val startPadding = if (navigationIcon != null) {
+        Space.Medium
+    } else {
+        Space.Large
+    }
+
+    val endPadding = if (actions != null) {
+        Space.Medium
+    } else {
+        Space.Large
+    }
+
     TopAppBar(
+        backgroundColor = MaterialTheme.colors.primary,
+        elevation = 16.dp, // TODO: Check
         modifier = modifier,
         contentPadding = PaddingValues(
-            start = Space.Large,
-            end = Space.MediumLarge,
+            start = startPadding,
+            end = endPadding,
         ),
         content = {
             CompositionLocalProvider(
@@ -31,7 +46,7 @@ fun AppToolbar(
                 ) {
                     if (navigationIcon != null) {
                         navigationIcon()
-                        Spacer(modifier = Modifier.width(Space.Medium))
+                        Spacer(modifier = Modifier.width(Space.Small))
                     }
 
                     Box(
@@ -45,7 +60,7 @@ fun AppToolbar(
                     }
 
                     if (actions != null) {
-                        Spacer(modifier = Modifier.width(Space.Medium))
+                        Spacer(modifier = Modifier.width(Space.Small))
                         actions()
                     }
                 }

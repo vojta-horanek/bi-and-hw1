@@ -3,6 +3,7 @@ package cz.cvut.fit.biand.homework1.presentation.detail
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.biand.homework1.domain.model.Character
 import cz.cvut.fit.biand.homework1.domain.usecase.GetCharacterByIdUseCase
+import cz.cvut.fit.biand.homework1.domain.usecase.ModifyCharacterFavouriteUseCase
 import cz.cvut.fit.biand.homework1.presentation.common.IntentViewModel
 import cz.cvut.fit.biand.homework1.presentation.common.VmIntent
 import cz.cvut.fit.biand.homework1.presentation.common.VmState
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 
 internal class DetailViewModel(
     private val getCharacter: GetCharacterByIdUseCase,
+    private val modifyCharacterFavourite: ModifyCharacterFavouriteUseCase,
 ) : IntentViewModel<DetailViewModel.State, DetailViewModel.Intent>(State()) {
 
     override fun State.applyIntent(intent: Intent) = when (intent) {
@@ -23,7 +25,10 @@ internal class DetailViewModel(
                 copy(error = null)
             }
         }
-        Intent.OnFavouriteClick -> copy(character = character?.copy(isFavourite = !isFavourite))
+        Intent.OnFavouriteClick -> {
+            character?.let { modifyFavourite(it, !isFavourite) }
+            copy(character = character?.copy(isFavourite = !isFavourite))
+        }
         Intent.OnRetryClick -> {
             if (id != null) {
                 loadCharacter(id)
@@ -31,6 +36,16 @@ internal class DetailViewModel(
             copy(loading = true, error = null)
         }
     }
+
+    private fun modifyFavourite(character: Character, isFavourite: Boolean) =
+        viewModelScope.launch {
+            modifyCharacterFavourite(
+                ModifyCharacterFavouriteUseCase.Params(
+                    character = character,
+                    isFavourite = isFavourite,
+                )
+            )
+        }
 
     private fun loadCharacter(id: Long) = viewModelScope.launch {
         getCharacter(id)

@@ -86,7 +86,7 @@ fun BottomNavigation(
                     .fillMaxWidth()
                     .height(BottomNavigationHeight)
                     .selectableGroup()
-                    .padding(horizontal = Space.ExtraLarge),
+                    .padding(horizontal = Space.ExtraLarge + Space.Large),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 bottomSheetItems.forEach { item ->

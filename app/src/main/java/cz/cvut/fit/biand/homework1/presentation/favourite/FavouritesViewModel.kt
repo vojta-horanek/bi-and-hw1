@@ -1,8 +1,8 @@
-package cz.cvut.fit.biand.homework1.presentation.overview
+package cz.cvut.fit.biand.homework1.presentation.favourite
 
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.biand.homework1.domain.model.Character
-import cz.cvut.fit.biand.homework1.domain.usecase.GetCharactersUseCase
+import cz.cvut.fit.biand.homework1.domain.usecase.GetFavouriteCharactersUseCase
 import cz.cvut.fit.biand.homework1.presentation.common.IntentViewModel
 import cz.cvut.fit.biand.homework1.presentation.common.VmIntent
 import cz.cvut.fit.biand.homework1.presentation.common.VmState
@@ -11,9 +11,9 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
-internal class OverviewViewModel(
-    private val getCharacters: GetCharactersUseCase,
-) : IntentViewModel<OverviewViewModel.State, OverviewViewModel.Intent>(State()) {
+internal class FavouritesViewModel(
+    private val getFavouriteCharacters: GetFavouriteCharactersUseCase,
+) : IntentViewModel<FavouritesViewModel.State, FavouritesViewModel.Intent>(State()) {
 
     override fun State.applyIntent(intent: Intent) = when (intent) {
         is OnCharactersLoaded -> copy(loading = false, items = intent.characters, error = null)
@@ -29,7 +29,7 @@ internal class OverviewViewModel(
     }
 
     private fun loadCharacters() = viewModelScope.launch {
-        getCharacters(null)
+        getFavouriteCharacters(null)
             .onSuccess { characters ->
                 onIntent(OnCharactersLoaded(characters.toPersistentList()))
             }
