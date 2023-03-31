@@ -16,6 +16,9 @@
     <string name="label_add_to_favorites">Add to favorites</string>
     <string name="title_search_characters">Search characters</string>
     <string name="label_no_characters_found">No characters found</string>
+    <string name="label_no_characters">No characters</string>
     <string name="label_unknown">Unknown</string>
     <string name="label_nothing">-</string>
+    <string name="label_error_occurred">An error occurred</string>
+    <string name="button_retry">Retry</string>
 </resources>

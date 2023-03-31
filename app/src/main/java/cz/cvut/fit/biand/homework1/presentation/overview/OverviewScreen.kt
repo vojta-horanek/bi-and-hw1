@@ -17,8 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
-import cz.cvut.fit.biand.homework1.presentation.common.BottomNavigationHeight
-import cz.cvut.fit.biand.homework1.presentation.common.Characters
+import cz.cvut.fit.biand.homework1.presentation.common.*
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
 import cz.cvut.fit.biand.homework1.presentation.navigation.navigateToBottomNavigationItem
@@ -60,6 +59,9 @@ internal fun OverviewRoute(
         state = state,
         onSearchClick = onNavigateToSearch,
         onCharacterClick = onNavigateToDetail,
+        onRetryClick = {
+            viewModel.onIntent(OverviewViewModel.Intent.OnRetryClick)
+        }
     )
 }
 
@@ -68,6 +70,7 @@ internal fun OverviewRoute(
 private fun OverviewScreen(
     state: OverviewViewModel.State,
     onSearchClick: () -> Unit,
+    onRetryClick: () -> Unit,
     onCharacterClick: (id: Long) -> Unit,
 ) {
     Scaffold(
@@ -105,18 +108,34 @@ private fun OverviewScreen(
             )
         }
     ) {
-        Characters(
-            characters = state.items,
-            onCharacterClick = { id ->
-                onCharacterClick(id)
-            },
-            contentPadding = PaddingValues(
-                start = Space.Medium,
-                end = Space.Medium,
-                top = Space.Medium,
-                bottom = Space.Medium + BottomNavigationHeight
+        ContentErrorLoading(
+            contentState = ContentState.fromState(
+                error = state.error,
+                loading = state.loading,
+                empty = state.isEmpty,
             ),
-            insideCard = true,
-        )
+            errorContent = {
+                Error(
+                    onRetryClick = onRetryClick,
+                )
+            },
+            emptyContent = {
+                Info(text = stringResource(R.string.label_no_characters))
+            }
+        ) {
+            Characters(
+                characters = state.items,
+                onCharacterClick = { id ->
+                    onCharacterClick(id)
+                },
+                contentPadding = PaddingValues(
+                    start = Space.Medium,
+                    end = Space.Medium,
+                    top = Space.Medium,
+                    bottom = Space.Medium + BottomNavigationHeight
+                ),
+                insideCard = true,
+            )
+        }
     }
 }

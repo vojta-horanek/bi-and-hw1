@@ -1,12 +1,9 @@
 package cz.cvut.fit.biand.homework1.presentation.search
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -29,8 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
-import cz.cvut.fit.biand.homework1.presentation.common.Characters
-import cz.cvut.fit.biand.homework1.presentation.common.DelayedExpandingContent
+import cz.cvut.fit.biand.homework1.presentation.common.*
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
 import cz.cvut.fit.biand.homework1.presentation.theme.Space
@@ -83,6 +79,9 @@ internal fun SearchRoute(
         },
         onClearClick = {
             viewModel.onIntent(SearchViewModel.Intent.OnClearClick)
+        },
+        onRetryClick = {
+            viewModel.onIntent(SearchViewModel.Intent.OnRetryClick)
         }
     )
 }
@@ -97,6 +96,7 @@ private fun SearchScreen(
     onQueryChanged: (String) -> Unit,
     onImeAction: () -> Unit,
     onClearClick: () -> Unit,
+    onRetryClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -158,18 +158,34 @@ private fun SearchScreen(
             )
         }
     ) {
-        Characters(
-            characters = state.items,
-            onCharacterClick = { id ->
-                onCharacterClick(id)
-            },
-            contentPadding = PaddingValues(
-                start = Space.Medium,
-                end = Space.Medium,
-                top = Space.Medium,
-                bottom = Space.Medium,
+        ContentErrorLoading(
+            contentState = ContentState.fromState(
+                error = state.error,
+                empty = state.isNoResultsVisible,
+                loading = state.loading,
             ),
-            insideCard = false,
-        )
+            errorContent = {
+                Error(
+                    onRetryClick = onRetryClick,
+                )
+            },
+            emptyContent = {
+                Info(text = stringResource(R.string.label_no_characters_found))
+            }
+        ) {
+            Characters(
+                characters = state.items,
+                onCharacterClick = { id ->
+                    onCharacterClick(id)
+                },
+                contentPadding = PaddingValues(
+                    start = Space.Medium,
+                    end = Space.Medium,
+                    top = Space.Medium,
+                    bottom = Space.Medium,
+                ),
+                insideCard = false,
+            )
+        }
     }
 }

@@ -1,5 +1,6 @@
 package cz.cvut.fit.biand.homework1.presentation.search
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.biand.homework1.domain.model.Character
 import cz.cvut.fit.biand.homework1.domain.usecase.GetCharactersUseCase
@@ -21,17 +22,23 @@ internal class SearchViewModel(
     private var searchJob: Job? = null
 
     override fun State.applyIntent(intent: Intent) = when (intent) {
-        is OnCharactersLoaded -> copy(loading = false, items = intent.characters)
+        is OnCharactersLoaded -> copy(loading = false, items = intent.characters, error = null)
         is OnError -> copy(loading = false, error = intent.error)
         is Intent.OnQueryChanged -> onQueryChanged(intent.query)
         OnLoading -> copy(loading = true)
         Intent.OnClearClick -> onQueryChanged("")
+        Intent.OnRetryClick -> onQueryChanged(query)
     }
 
     private fun State.onQueryChanged(query: String): State {
         if (query.isEmpty()) {
             searchJob?.cancel()
-            return copy(query = query, loading = false, items = persistentListOf())
+            return copy(
+                query = query,
+                loading = false,
+                items = persistentListOf(),
+                error = null,
+            )
         }
 
         searchJob?.cancel()
@@ -40,7 +47,7 @@ internal class SearchViewModel(
             onIntent(OnLoading)
             loadCharacters(query)
         }
-        return copy(query = query)
+        return copy(query = query, loading = true)
     }
 
     private suspend fun loadCharacters(query: String) {
@@ -55,6 +62,7 @@ internal class SearchViewModel(
 
     sealed interface Intent : VmIntent {
         object OnClearClick : Intent
+        object OnRetryClick : Intent
 
         data class OnQueryChanged(val query: String) : Intent
     }
@@ -65,7 +73,7 @@ internal class SearchViewModel(
 
     data class State(
         val query: String = "",
-        val loading: Boolean = true,
+        val loading: Boolean = false,
         val items: ImmutableList<Character> = persistentListOf(),
         val error: Throwable? = null,
     ) : VmState {

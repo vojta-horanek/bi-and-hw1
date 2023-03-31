@@ -21,7 +21,9 @@ internal class CharactersApiImpl(
 ) : CharactersApi {
     override suspend fun getCharacters(
         name: String?
-    ): Result<PagingDtoWrapper<CharacterDto>> = catchingNetwork {
+    ): Result<PagingDtoWrapper<CharacterDto>> = catchingNetwork(
+        defaultValue = PagingDtoWrapper()
+    ) {
         httpClient
             .get("character") {
                 parameter("name", name)

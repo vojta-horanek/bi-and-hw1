@@ -22,6 +22,10 @@ internal class OverviewViewModel(
             loadCharacters()
             copy(loading = true)
         }
+        Intent.OnRetryClick -> {
+            loadCharacters()
+            copy(loading = true)
+        }
     }
 
     private fun loadCharacters() = viewModelScope.launch {
@@ -36,6 +40,7 @@ internal class OverviewViewModel(
 
     sealed interface Intent : VmIntent {
         object OnViewInitialized : Intent
+        object OnRetryClick : Intent
     }
 
     private data class OnCharactersLoaded(val characters: ImmutableList<Character>) : Intent
@@ -45,5 +50,7 @@ internal class OverviewViewModel(
         val loading: Boolean = true,
         val items: ImmutableList<Character> = persistentListOf(),
         val error: Throwable? = null,
-    ) : VmState
+    ) : VmState {
+        val isEmpty = items.isEmpty()
+    }
 }
