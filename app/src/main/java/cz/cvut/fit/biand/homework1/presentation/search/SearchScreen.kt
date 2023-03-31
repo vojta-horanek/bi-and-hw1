@@ -2,8 +2,6 @@ package cz.cvut.fit.biand.homework1.presentation.search
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -15,22 +13,19 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
 import cz.cvut.fit.biand.homework1.presentation.common.*
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
+import cz.cvut.fit.biand.homework1.presentation.theme.IconSize
 import cz.cvut.fit.biand.homework1.presentation.theme.Space
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 fun NavController.navigateToSearch() {
@@ -100,58 +95,65 @@ private fun SearchScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                content = {
+            AppToolbar(
+                navigationIcon = {
                     DelayedExpandingContent {
                         IconButton(onClick = onBackPressed) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_arrow_left),
                                 contentDescription = null,
+                                modifier = Modifier.size(IconSize.Medium)
                             )
                         }
                     }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
+                },
+                title = {
+                    Box(
+                        contentAlignment = Alignment.CenterStart,
+                        modifier = Modifier
+                            .fillMaxWidth(1f),
                     ) {
-                        Box(
-                            contentAlignment = Alignment.CenterStart,
+
+                        BasicTextField(
+                            value = state.query,
+                            onValueChange = onQueryChanged,
+                            textStyle = MaterialTheme.typography.body1,
+                            singleLine = true,
                             modifier = Modifier
-                                .weight(1f),
-                        ) {
-                            BasicTextField(
-                                value = state.query,
-                                onValueChange = onQueryChanged,
-                                singleLine = true,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .focusRequester(focusRequester),
-                                keyboardOptions = KeyboardOptions.Default.copy(
-                                    imeAction = ImeAction.Search,
-                                ),
-                                keyboardActions = KeyboardActions {
-                                    onImeAction()
-                                },
-                                cursorBrush = SolidColor(MaterialTheme.colors.secondary),
-                            )
-                            if (state.isLabelVisible) {
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Search,
+                            ),
+                            keyboardActions = KeyboardActions {
+                                onImeAction()
+                            },
+                            cursorBrush = SolidColor(MaterialTheme.colors.secondary),
+                        )
+                        if (state.isLabelVisible) {
+                            CompositionLocalProvider(
+                                LocalContentAlpha provides ContentAlpha.medium,
+                            ) {
                                 Text(
                                     text = stringResource(R.string.title_search_characters),
-                                    modifier = Modifier
+                                    style = MaterialTheme.typography.body1,
                                 )
                             }
                         }
-                        AnimatedVisibility(
-                            visible = state.isClearVisible,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                        ) {
-                            IconButton(onClick = onClearClick) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_clear),
-                                    contentDescription = null,
-                                )
-                            }
+                    }
+                },
+                actions = {
+                    AnimatedVisibility(
+                        visible = state.isClearVisible,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        IconButton(onClick = onClearClick) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_clear),
+                                contentDescription = null,
+                                modifier = Modifier.size(IconSize.Medium)
+                            )
                         }
                     }
                 },

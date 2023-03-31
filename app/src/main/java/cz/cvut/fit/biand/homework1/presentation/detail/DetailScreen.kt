@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -17,9 +18,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
-import cz.cvut.fit.biand.homework1.presentation.common.CharacterDetail
+import cz.cvut.fit.biand.homework1.presentation.common.*
+import cz.cvut.fit.biand.homework1.presentation.common.ContentState.Companion
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
+import cz.cvut.fit.biand.homework1.presentation.theme.IconSize
 import cz.cvut.fit.biand.homework1.presentation.theme.Space
 import org.koin.androidx.compose.koinViewModel
 
@@ -58,6 +61,9 @@ internal fun DetailRoute(
         onBackPressed = onBackPressed,
         onFavouriteClick = {
             viewModel.onIntent(DetailViewModel.Intent.OnFavouriteClick)
+        },
+        onRetryClick = {
+            viewModel.onIntent(DetailViewModel.Intent.OnRetryClick)
         }
     )
 }
@@ -67,68 +73,79 @@ internal fun DetailRoute(
 private fun DetailScreen(
     state: DetailViewModel.State,
     onFavouriteClick: () -> Unit,
+    onRetryClick: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                content = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+            AppToolbar(
+                navigationIcon = {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_arrow_left),
+                            contentDescription = null,
+                            modifier = Modifier.size(IconSize.Medium)
+                        )
+                    }
+                },
+                title = {
+                    Text(
+                        text = state.character?.name.orEmpty(),
+                    )
+                },
+                actions = {
+                    IconButton(
+                        onClick = onFavouriteClick,
+                        enabled = !state.loading,
                     ) {
-                        CompositionLocalProvider(
-                            LocalContentAlpha provides ContentAlpha.high
-                        ) {
-                            IconButton(onClick = onBackPressed) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_arrow_left),
-                                    contentDescription = null,
-                                )
+                        Crossfade(
+                            targetState = state.isFavourite
+                        ) { isFavourite ->
+                            val painter = if (isFavourite) {
+                                painterResource(R.drawable.ic_favourite_selected)
+                            } else {
+                                painterResource(R.drawable.ic_favourite)
                             }
 
-                            Text(
-                                text = state.character?.name.orEmpty(),
-                                style = MaterialTheme.typography.h2,
-                                modifier = Modifier
-                                    .weight(1f),
+                            val tint = if (isFavourite) {
+                                MaterialTheme.colors.secondary
+                            } else {
+                                MaterialTheme.colors.onPrimary
+                            }
+
+                            Icon(
+                                painter = painter,
+                                tint = tint,
+                                contentDescription = null,
+                                modifier = Modifier.size(IconSize.Medium)
                             )
-
-                            IconButton(onClick = onFavouriteClick) {
-                                Crossfade(
-                                    targetState = state.isFavourite
-                                ) { isFavourite ->
-                                    val painter = if (isFavourite) {
-                                        painterResource(R.drawable.ic_favourite_selected)
-                                    } else {
-                                        painterResource(R.drawable.ic_favourite)
-                                    }
-
-                                    val tint = if (isFavourite) {
-                                        MaterialTheme.colors.secondary
-                                    } else {
-                                        MaterialTheme.colors.onPrimary
-                                    }
-
-                                    Icon(
-                                        painter = painter,
-                                        tint = tint,
-                                        contentDescription = null,
-                                    )
-                                }
-                            }
                         }
                     }
-                }
+                },
             )
         }
     ) {
-        if (state.character != null) {
-            CharacterDetail(
-                character = state.character,
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(Space.Medium)
-            )
+        ContentErrorLoading(
+            contentState = ContentState.fromState(
+                error = state.error,
+                empty = false,
+                loading = state.loading,
+            ),
+            errorContent = {
+                Error(
+                    onRetryClick = onRetryClick,
+                )
+            },
+            emptyContent = { },
+        ) {
+            if (state.character != null) {
+                CharacterDetail(
+                    character = state.character,
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(Space.Medium)
+                )
+            }
         }
     }
 }

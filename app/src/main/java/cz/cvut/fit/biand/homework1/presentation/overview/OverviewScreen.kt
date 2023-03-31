@@ -75,34 +75,21 @@ private fun OverviewScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                content = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(
-                                start = Space.Large,
-                            )
+            AppToolbar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.title_characters),
+                    )
+                },
+                actions = {
+                    IconButton(
+                        onClick = onSearchClick,
                     ) {
-                        CompositionLocalProvider(
-                            LocalContentAlpha provides ContentAlpha.high
-                        ) {
-                            Text(
-                                text = stringResource(R.string.title_characters),
-                                style = MaterialTheme.typography.h2,
-                                modifier = Modifier
-                                    .weight(1f)
-                            )
-                            IconButton(
-                                onClick = onSearchClick,
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_search),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(IconSize.Medium)
-                                )
-                            }
-                        }
+                        Icon(
+                            painter = painterResource(R.drawable.ic_search),
+                            contentDescription = null,
+                            modifier = Modifier.size(IconSize.Medium)
+                        )
                     }
                 },
             )

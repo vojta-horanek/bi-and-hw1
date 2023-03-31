@@ -16,15 +16,19 @@ internal class OverviewViewModel(
 ) : IntentViewModel<OverviewViewModel.State, OverviewViewModel.Intent>(State()) {
 
     override fun State.applyIntent(intent: Intent) = when (intent) {
-        is OnCharactersLoaded -> copy(loading = false, items = intent.characters)
+        is OnCharactersLoaded -> copy(loading = false, items = intent.characters, error = null)
         is OnError -> copy(loading = false, error = intent.error)
         is Intent.OnViewInitialized -> {
-            loadCharacters()
-            copy(loading = true)
+            if (!isEmpty) {
+                copy(error = null)
+            } else {
+                loadCharacters()
+                copy(loading = true, error = null)
+            }
         }
         Intent.OnRetryClick -> {
             loadCharacters()
-            copy(loading = true)
+            copy(loading = true, error = null)
         }
     }
 

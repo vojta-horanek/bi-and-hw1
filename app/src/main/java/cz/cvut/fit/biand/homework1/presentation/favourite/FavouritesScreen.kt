@@ -10,6 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
+import cz.cvut.fit.biand.homework1.presentation.common.AppToolbar
 import cz.cvut.fit.biand.homework1.presentation.common.Characters
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
@@ -47,7 +48,7 @@ private fun FavouritesScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            AppToolbar(
                 title = {
                     Text(text = stringResource(R.string.title_favourites))
                 },

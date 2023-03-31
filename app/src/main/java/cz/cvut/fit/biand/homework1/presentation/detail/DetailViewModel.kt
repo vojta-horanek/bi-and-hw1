@@ -13,13 +13,23 @@ internal class DetailViewModel(
 ) : IntentViewModel<DetailViewModel.State, DetailViewModel.Intent>(State()) {
 
     override fun State.applyIntent(intent: Intent) = when (intent) {
-        is OnCharacterLoaded -> copy(loading = false, character = intent.character)
+        is OnCharacterLoaded -> copy(loading = false, character = intent.character, error = null)
         is OnError -> copy(loading = false, error = intent.error)
         is Intent.OnViewInitialized -> {
-            loadCharacter(intent.id)
-            copy(loading = true, id = intent.id)
+            if (character == null) {
+                loadCharacter(intent.id)
+                copy(loading = true, id = intent.id)
+            } else {
+                copy(error = null)
+            }
         }
-        Intent.OnFavouriteClick -> this
+        Intent.OnFavouriteClick -> copy(character = character?.copy(isFavourite = !isFavourite))
+        Intent.OnRetryClick -> {
+            if (id != null) {
+                loadCharacter(id)
+            }
+            copy(loading = true, error = null)
+        }
     }
 
     private fun loadCharacter(id: Long) = viewModelScope.launch {
@@ -35,6 +45,7 @@ internal class DetailViewModel(
     sealed interface Intent : VmIntent {
         data class OnViewInitialized(val id: Long) : Intent
         object OnFavouriteClick : Intent
+        object OnRetryClick : Intent
     }
 
     private data class OnCharacterLoaded(val character: Character) : Intent
