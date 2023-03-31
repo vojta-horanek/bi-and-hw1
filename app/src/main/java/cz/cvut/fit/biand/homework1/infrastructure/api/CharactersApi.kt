@@ -33,7 +33,7 @@ internal class CharactersApiImpl(
         id: Long
     ): Result<CharacterDto> = catchingNetwork {
         httpClient
-            .get("characters/$id")
+            .get("character/$id")
             .body()
     }
 }

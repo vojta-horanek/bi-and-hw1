@@ -3,8 +3,6 @@ package cz.cvut.fit.biand.homework1.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import cz.cvut.fit.biand.homework1.presentation.common.RootLayout

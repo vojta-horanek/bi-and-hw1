@@ -2,10 +2,16 @@ package cz.cvut.fit.biand.homework1.presentation.overview
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
@@ -16,6 +22,7 @@ import cz.cvut.fit.biand.homework1.presentation.common.Characters
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
 import cz.cvut.fit.biand.homework1.presentation.navigation.navigateToBottomNavigationItem
+import cz.cvut.fit.biand.homework1.presentation.theme.IconSize
 import cz.cvut.fit.biand.homework1.presentation.theme.Space
 import org.koin.androidx.compose.koinViewModel
 
@@ -66,16 +73,34 @@ private fun OverviewScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                actions = {
-                    IconButton(onClick = onSearchClick) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_search),
-                            contentDescription = null,
-                        )
+                content = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(
+                                start = Space.Large,
+                            )
+                    ) {
+                        CompositionLocalProvider(
+                            LocalContentAlpha provides ContentAlpha.high
+                        ) {
+                            Text(
+                                text = stringResource(R.string.title_characters),
+                                style = MaterialTheme.typography.h2,
+                                modifier = Modifier
+                                    .weight(1f)
+                            )
+                            IconButton(
+                                onClick = onSearchClick,
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_search),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(IconSize.Medium)
+                                )
+                            }
+                        }
                     }
-                },
-                title = {
-                    Text(text = stringResource(R.string.title_characters))
                 },
             )
         }

@@ -2,6 +2,9 @@ package cz.cvut.fit.biand.homework1.presentation.search
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
@@ -9,10 +12,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -30,9 +30,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
 import cz.cvut.fit.biand.homework1.presentation.common.Characters
+import cz.cvut.fit.biand.homework1.presentation.common.DelayedExpandingContent
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
 import cz.cvut.fit.biand.homework1.presentation.theme.Space
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 fun NavController.navigateToSearch() {
@@ -78,6 +80,9 @@ internal fun SearchRoute(
         },
         onImeAction = {
             keyboardController?.hide()
+        },
+        onClearClick = {
+            viewModel.onIntent(SearchViewModel.Intent.OnClearClick)
         }
     )
 }
@@ -91,16 +96,19 @@ private fun SearchScreen(
     onCharacterClick: (id: Long) -> Unit,
     onQueryChanged: (String) -> Unit,
     onImeAction: () -> Unit,
+    onClearClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 content = {
-                    IconButton(onClick = onBackPressed) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_arrow_left),
-                            contentDescription = null,
-                        )
+                    DelayedExpandingContent {
+                        IconButton(onClick = onBackPressed) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_arrow_left),
+                                contentDescription = null,
+                            )
+                        }
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -138,7 +146,7 @@ private fun SearchScreen(
                             enter = fadeIn(),
                             exit = fadeOut(),
                         ) {
-                            IconButton(onClick = onBackPressed) {
+                            IconButton(onClick = onClearClick) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_clear),
                                     contentDescription = null,

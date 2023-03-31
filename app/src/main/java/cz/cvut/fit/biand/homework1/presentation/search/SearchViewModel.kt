@@ -25,6 +25,7 @@ internal class SearchViewModel(
         is OnError -> copy(loading = false, error = intent.error)
         is Intent.OnQueryChanged -> onQueryChanged(intent.query)
         OnLoading -> copy(loading = true)
+        Intent.OnClearClick -> onQueryChanged("")
     }
 
     private fun State.onQueryChanged(query: String): State {
@@ -53,6 +54,8 @@ internal class SearchViewModel(
     }
 
     sealed interface Intent : VmIntent {
+        object OnClearClick : Intent
+
         data class OnQueryChanged(val query: String) : Intent
     }
 
