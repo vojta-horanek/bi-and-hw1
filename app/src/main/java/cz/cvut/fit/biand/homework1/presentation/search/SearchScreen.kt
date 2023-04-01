@@ -116,7 +116,9 @@ private fun SearchScreen(
                         BasicTextField(
                             value = state.query,
                             onValueChange = onQueryChanged,
-                            textStyle = MaterialTheme.typography.body1, //TODO: Black theme font color
+                            textStyle = MaterialTheme.typography.body1.copy(
+                                color = MaterialTheme.colors.onPrimary
+                            ),
                             singleLine = true,
                             modifier = Modifier
                                 .fillMaxWidth()

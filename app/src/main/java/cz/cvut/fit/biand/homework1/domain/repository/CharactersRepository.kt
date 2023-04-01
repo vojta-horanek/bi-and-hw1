@@ -5,6 +5,7 @@ import cz.cvut.fit.biand.homework1.domain.model.PagingWrapper
 
 internal interface CharactersRepository {
     suspend fun getCharacters(
+        page: String,
         name: String? = null,
     ): Result<PagingWrapper<Character>>
 

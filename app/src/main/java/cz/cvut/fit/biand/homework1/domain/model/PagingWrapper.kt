@@ -18,8 +18,8 @@ class PagingWrapper<T>(
 data class Pagination(
     val count: Long,
     val pages: Long,
-    val next: String?,
-    val previous: String?,
+    val nextKey: String?,
+    val prevKey: String?,
 )
 
 /**

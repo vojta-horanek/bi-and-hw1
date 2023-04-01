@@ -7,8 +7,8 @@ import cz.cvut.fit.biand.homework1.infrastructure.dto.toDomain
 internal class CharactersRemoteSourceImpl(
     private val api: CharactersApi,
 ) : CharactersRemoteSource {
-    override suspend fun getCharacters(name: String?) =
-        api.getCharacters(name)
+    override suspend fun getCharacters(page: String, name: String?) =
+        api.getCharacters(page, name)
             .map { paging -> paging.toDomain { dto -> dto.toDomain() } }
 
     override suspend fun getCharacter(id: Long) =

@@ -50,5 +50,4 @@ val appTypography = Typography(
         lineHeight = 18.sp,
         letterSpacing = 0.sp,
     ),
-    // TODO: Font styles
 )

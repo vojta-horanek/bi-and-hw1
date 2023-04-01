@@ -7,10 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
 
 abstract class IntentViewModel<State : VmState, Intent : VmIntent>(
     initialState: State,
-) : ViewModel() {
+) : ViewModel(), KoinComponent {
     private val stateFlow = stateReducerFlowOf(
         initialState = initialState,
         reduceState = ::reduceState,
@@ -22,9 +23,13 @@ abstract class IntentViewModel<State : VmState, Intent : VmIntent>(
     fun onIntent(intent: Intent) = stateFlow.handleIntent(intent)
 
     private fun reduceState(state: State, intent: Intent): State =
-        state.applyIntent(intent)
+        state.applyIntent(intent).also { nextState ->
+            onStateUpdate(state, nextState)
+        }
 
     protected abstract fun State.applyIntent(intent: Intent): State
+
+    open fun onStateUpdate(previousState: State, nextState: State) {}
 }
 
 /**

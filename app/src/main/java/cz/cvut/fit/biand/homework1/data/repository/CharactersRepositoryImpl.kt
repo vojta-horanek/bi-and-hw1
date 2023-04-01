@@ -10,8 +10,8 @@ internal class CharactersRepositoryImpl(
     private val remoteSource: CharactersRemoteSource,
     private val localSource: CharactersLocalSource,
 ) : CharactersRepository {
-    override suspend fun getCharacters(name: String?) =
-        remoteSource.getCharacters(name).map { wrapper ->
+    override suspend fun getCharacters(page: String, name: String?) =
+        remoteSource.getCharacters(page, name).map { wrapper ->
             val favourites = localSource.getFavouriteCharacters()
                 .map { it.id }
                 .toSet()

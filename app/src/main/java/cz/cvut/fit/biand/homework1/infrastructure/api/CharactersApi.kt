@@ -8,6 +8,7 @@ import io.ktor.client.request.*
 
 internal interface CharactersApi {
     suspend fun getCharacters(
+        page: String,
         name: String? = null,
     ): Result<PagingDtoWrapper<CharacterDto>>
 
@@ -20,6 +21,7 @@ internal class CharactersApiImpl(
     private val httpClient: HttpClient
 ) : CharactersApi {
     override suspend fun getCharacters(
+        page: String,
         name: String?
     ): Result<PagingDtoWrapper<CharacterDto>> = catchingNetwork(
         defaultValue = PagingDtoWrapper()
@@ -27,6 +29,7 @@ internal class CharactersApiImpl(
         httpClient
             .get("character") {
                 parameter("name", name)
+                parameter("page", page)
             }
             .body()
     }

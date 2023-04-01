@@ -10,7 +10,7 @@ internal class CharactersLocalSourceImpl : CharactersLocalSource {
     }
 
     override suspend fun addFavourite(character: Character) {
-        favourites.add(character)
+        favourites.add(character.copy(isFavourite = true))
     }
 
     override suspend fun removeFavourite(character: Character) {

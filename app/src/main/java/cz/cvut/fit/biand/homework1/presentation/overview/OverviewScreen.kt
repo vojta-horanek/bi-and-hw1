@@ -1,22 +1,20 @@
 package cz.cvut.fit.biand.homework1.presentation.overview
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import cz.cvut.fit.biand.homework1.R
+import cz.cvut.fit.biand.homework1.domain.model.Character
 import cz.cvut.fit.biand.homework1.presentation.common.*
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
@@ -49,26 +47,22 @@ internal fun OverviewRoute(
     onNavigateToDetail: (id: Long) -> Unit,
     viewModel: OverviewViewModel = koinViewModel(),
 ) {
-    val state by viewModel.collectState()
-
-    LaunchedEffect(Unit) {
-        viewModel.onIntent(OverviewViewModel.Intent.OnViewInitialized)
-    }
+    val characters = viewModel.characters.collectAsLazyPagingItems()
 
     OverviewScreen(
-        state = state,
         onSearchClick = onNavigateToSearch,
         onCharacterClick = onNavigateToDetail,
+        characters = characters,
         onRetryClick = {
             viewModel.onIntent(OverviewViewModel.Intent.OnRetryClick)
-        }
+        },
     )
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 private fun OverviewScreen(
-    state: OverviewViewModel.State,
+    characters: LazyPagingItems<Character>,
     onSearchClick: () -> Unit,
     onRetryClick: () -> Unit,
     onCharacterClick: (id: Long) -> Unit,
@@ -95,34 +89,31 @@ private fun OverviewScreen(
             )
         }
     ) {
-        ContentErrorLoading(
-            contentState = ContentState.fromState(
-                error = state.error,
-                loading = state.loading,
-                empty = state.isEmpty,
+        LazyColumn(
+            contentPadding = PaddingValues(
+                start = Space.Medium,
+                end = Space.Medium,
+                top = Space.Medium,
+                bottom = Space.Medium + BottomNavigationHeight
             ),
-            errorContent = {
-                Error(
-                    onRetryClick = onRetryClick,
-                )
-            },
-            emptyContent = {
-                Info(text = stringResource(R.string.label_no_characters))
-            }
+            verticalArrangement = Arrangement.spacedBy(Space.Medium)
         ) {
-            Characters(
-                characters = state.items,
-                onCharacterClick = { id ->
-                    onCharacterClick(id)
-                },
-                contentPadding = PaddingValues(
-                    start = Space.Medium,
-                    end = Space.Medium,
-                    top = Space.Medium,
-                    bottom = Space.Medium + BottomNavigationHeight
-                ),
-                insideCard = true,
-            )
+            items(characters) { character ->
+                if (character == null) {
+                    return@items
+                }
+                Character(
+                    name = character.name.orEmpty(),
+                    status = character.status.orEmpty(),
+                    avatarUri = character.image,
+                    insideCard = true,
+                    isFavourite = character.isFavourite,
+                    onClick = {
+                        onCharacterClick(character.id)
+                    },
+                )
+            }
         }
+
     }
 }

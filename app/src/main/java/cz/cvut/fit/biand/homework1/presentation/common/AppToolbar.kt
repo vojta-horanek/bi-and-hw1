@@ -30,7 +30,6 @@ fun AppToolbar(
 
     TopAppBar(
         backgroundColor = MaterialTheme.colors.primary,
-        elevation = 16.dp, // TODO: Check
         modifier = modifier,
         contentPadding = PaddingValues(
             start = startPadding,

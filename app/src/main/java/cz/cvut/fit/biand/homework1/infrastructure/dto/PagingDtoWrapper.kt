@@ -1,5 +1,6 @@
 package cz.cvut.fit.biand.homework1.infrastructure.dto
 
+import androidx.core.net.toUri
 import cz.cvut.fit.biand.homework1.domain.model.Pagination
 import cz.cvut.fit.biand.homework1.domain.model.PagingWrapper
 import kotlinx.serialization.SerialName
@@ -31,6 +32,6 @@ internal data class PaginationDto(
 internal fun PaginationDto.toDomain() = Pagination(
     count = count,
     pages = pages,
-    next = next,
-    previous = previous
+    nextKey = next?.toUri()?.getQueryParameter("page"),
+    prevKey = previous?.toUri()?.getQueryParameter("page"),
 )

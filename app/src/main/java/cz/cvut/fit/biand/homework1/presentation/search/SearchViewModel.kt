@@ -1,6 +1,5 @@
 package cz.cvut.fit.biand.homework1.presentation.search
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.biand.homework1.domain.model.Character
 import cz.cvut.fit.biand.homework1.domain.usecase.GetCharactersUseCase
@@ -51,9 +50,9 @@ internal class SearchViewModel(
     }
 
     private suspend fun loadCharacters(query: String) {
-        getCharacters(query)
+        getCharacters(GetCharactersUseCase.Params(query, "1"))
             .onSuccess { characters ->
-                onIntent(OnCharactersLoaded(characters.toPersistentList()))
+                onIntent(OnCharactersLoaded(characters.list.toPersistentList()))
             }
             .onFailure { error ->
                 onIntent(OnError(error))
