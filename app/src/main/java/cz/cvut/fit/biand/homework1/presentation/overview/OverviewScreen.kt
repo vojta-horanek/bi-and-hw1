@@ -3,11 +3,14 @@ package cz.cvut.fit.biand.homework1.presentation.overview
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.paging.compose.LazyPagingItems
@@ -73,6 +76,8 @@ private fun OverviewScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.title_characters),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 actions = {
@@ -89,30 +94,80 @@ private fun OverviewScreen(
             )
         }
     ) {
-        LazyColumn(
+        LazyPagingItemsScreen(
             contentPadding = PaddingValues(
                 start = Space.Medium,
                 end = Space.Medium,
                 top = Space.Medium,
                 bottom = Space.Medium + BottomNavigationHeight
             ),
-            verticalArrangement = Arrangement.spacedBy(Space.Medium)
-        ) {
-            items(characters) { character ->
-                if (character == null) {
-                    return@items
-                }
-                Character(
-                    name = character.name.orEmpty(),
-                    status = character.status.orEmpty(),
-                    avatarUri = character.image,
-                    insideCard = true,
-                    isFavourite = character.isFavourite,
-                    onClick = {
-                        onCharacterClick(character.id)
-                    },
+            modifier = Modifier
+                .fillMaxSize(),
+            lazyPagingItems = characters,
+            emptyContent = {
+                Info(text = stringResource(R.string.label_no_characters),)
+            },
+            errorContent = {
+                Error(
+                    onRetryClick = onRetryClick,
+                    modifier = Modifier
+                        .fillMaxSize()
                 )
+            },
+            loadingContent = { contentPadding ->
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(Space.Medium),
+                    modifier = Modifier
+                        .verticalScroll(
+                            state = rememberScrollState(),
+                            enabled = false,
+                        )
+                        .padding(contentPadding),
+                ) {
+                    repeat(10) {
+                        CharacterSkeleton(
+                            insideCard = true,
+                        )
+                    }
+                }
+            },
+            appendErrorItem = {
+                item {
+                    Error(
+                        onRetryClick = onRetryClick,
+                    )
+                }
+            },
+            appendLoadingItem = {
+                items(3) {
+                    CharacterSkeleton(
+                        insideCard = true,
+                    )
+                }
             }
+        ) { padding, appendContent ->
+            LazyColumn(
+                contentPadding = padding,
+                verticalArrangement = Arrangement.spacedBy(Space.Medium)
+            ) {
+                items(characters) { character ->
+                    if (character == null) {
+                        return@items
+                    }
+                    Character(
+                        name = character.name.orEmpty(),
+                        status = character.status.orEmpty(),
+                        avatarUri = character.image,
+                        insideCard = true,
+                        isFavourite = character.isFavourite,
+                        onClick = {
+                            onCharacterClick(character.id)
+                        },
+                    )
+                }
+                appendContent()
+            }
+
         }
 
     }

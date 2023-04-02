@@ -6,11 +6,10 @@ import org.koin.core.parameter.parametersOf
 
 internal class OverviewViewModel :
     IntentViewModel<OverviewViewModel.State, OverviewViewModel.Intent>(State()) {
-    private fun pagingSourceFactory(name: String?) =
-        get<CharactersPagingSource> { parametersOf(name) }
+    private fun pagingSourceFactory() =
+        get<CharactersPagingSource> { parametersOf(null) }
 
-
-    private val pager = DefaultPager { pagingSourceFactory(null) }
+    private val pager = DefaultPager { pagingSourceFactory() }
     val characters = pager.flow
 
     override fun State.applyIntent(intent: Intent) = when (intent) {

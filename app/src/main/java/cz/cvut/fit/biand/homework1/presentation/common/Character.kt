@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.google.accompanist.placeholder.material.placeholder
 import cz.cvut.fit.biand.homework1.R
 import cz.cvut.fit.biand.homework1.presentation.theme.AppTheme
 import cz.cvut.fit.biand.homework1.presentation.theme.Space
@@ -96,6 +97,74 @@ fun Character(
             modifier = modifier
                 .clip(MaterialTheme.shapes.medium)
                 .clickable { onClick() }
+                .fillMaxWidth(),
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun CharacterSkeleton(
+    insideCard: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val content = remember {
+        movableContentOf {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(Space.Medium),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Top)
+                        .size(AvatarSize)
+                        .clip(MaterialTheme.shapes.small)
+                        .placeholder(
+                            visible = true,
+                        ),
+                )
+                Column(
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .padding(horizontal = Space.Large),
+                ) {
+                    Text(
+                        style = MaterialTheme.typography.h3,
+                        text = "",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .placeholder(
+                                visible = true
+                            )
+                    )
+                    Spacer(modifier = Modifier.height(Space.Small))
+                    Text(
+                        text = "",
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .placeholder(
+                                visible = true
+                            ),
+                    )
+                }
+            }
+        }
+    }
+
+    if (insideCard) {
+        Card(
+            elevation = 4.dp,
+            modifier = modifier
+                .fillMaxWidth(),
+        ) {
+            content()
+        }
+    } else {
+        Box(
+            modifier = modifier
                 .fillMaxWidth(),
         ) {
             content()

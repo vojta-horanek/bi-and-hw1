@@ -8,7 +8,4 @@ class CharactersPagingSource(
     provider: CharactersPagingProvider,
 ) : BasePagingSource<Character>(
     provider = provider,
-    idProvider = { character: Character ->
-        character.id.toString() // TODO: Wtf
-    },
 )

@@ -19,7 +19,7 @@ fun Error(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxWidth(),
     ) {
         CompositionLocalProvider(
             LocalContentAlpha provides ContentAlpha.medium,

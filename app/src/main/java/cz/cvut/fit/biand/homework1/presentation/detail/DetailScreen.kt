@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -14,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
@@ -90,6 +92,8 @@ private fun DetailScreen(
                     Crossfade(state.character?.name.orEmpty()) { name ->
                         Text(
                             text = name,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 },
@@ -139,6 +143,8 @@ private fun DetailScreen(
             errorContent = {
                 Error(
                     onRetryClick = onRetryClick,
+                    modifier = Modifier
+                        .fillMaxSize(),
                 )
             },
             emptyContent = { },

@@ -2,11 +2,14 @@ package cz.cvut.fit.biand.homework1.presentation.favourite
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
@@ -66,6 +69,8 @@ private fun FavouritesScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.title_favourites),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
             )
@@ -80,6 +85,8 @@ private fun FavouritesScreen(
             errorContent = {
                 Error(
                     onRetryClick = onRetryClick,
+                    modifier = Modifier
+                        .fillMaxSize(),
                 )
             },
             emptyContent = {

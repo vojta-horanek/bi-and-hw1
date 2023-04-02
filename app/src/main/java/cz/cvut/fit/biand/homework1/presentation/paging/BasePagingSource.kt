@@ -10,11 +10,10 @@ import cz.cvut.fit.biand.homework1.domain.common.BasePagingProvider
  */
 abstract class BasePagingSource<T : Any>(
     private val provider: BasePagingProvider<T>,
-    private val idProvider: (T) -> String,
 ) : PagingSource<String, T>() {
 
     override fun getRefreshKey(state: PagingState<String, T>): String? {
-        return state.anchorPosition?.let { state.closestItemToPosition(it)?.let(idProvider) }
+        return null
     }
 
     override suspend fun load(params: LoadParams<String>): LoadResult<String, T> {

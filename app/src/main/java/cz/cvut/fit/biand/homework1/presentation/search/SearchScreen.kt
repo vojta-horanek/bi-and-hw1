@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import cz.cvut.fit.biand.homework1.R
@@ -138,6 +139,8 @@ private fun SearchScreen(
                                 Text(
                                     text = stringResource(R.string.title_search_characters),
                                     style = MaterialTheme.typography.body1,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                         }
@@ -161,6 +164,17 @@ private fun SearchScreen(
             )
         }
     ) {
+//        LazyPagingItemsScreen(
+//            lazyPagingItems =,
+//            emptyContent =,
+//            errorContent =,
+//            loadingContent =,
+//            appendErrorItem =,
+//            appendLoadingItem =
+//        ) {
+//
+//        }
+
         ContentErrorLoading(
             contentState = ContentState.fromState(
                 error = state.error,
