@@ -1,7 +1,7 @@
 package cz.cvut.fit.biand.homework1.infrastructure.api
 
-import cz.cvut.fit.biand.homework1.infrastructure.dto.PagingDtoWrapper
 import cz.cvut.fit.biand.homework1.infrastructure.dto.CharacterDto
+import cz.cvut.fit.biand.homework1.infrastructure.dto.PagingDtoWrapper
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*

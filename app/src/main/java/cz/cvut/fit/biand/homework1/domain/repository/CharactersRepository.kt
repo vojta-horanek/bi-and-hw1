@@ -15,7 +15,7 @@ internal interface CharactersRepository {
 
     suspend fun getFavouriteCharacters(): Result<List<Character>>
 
-    suspend fun addFavourite(character: Character)
+    suspend fun addFavourite(id: Long)
 
-    suspend fun removeFavourite(character: Character)
+    suspend fun removeFavourite(id: Long)
 }

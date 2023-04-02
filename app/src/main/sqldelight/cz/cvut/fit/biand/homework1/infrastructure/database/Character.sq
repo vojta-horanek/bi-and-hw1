@@ -1,0 +1,30 @@
+CREATE TABLE CharacterEntity(
+    id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT,
+    status TEXT,
+    species TEXT,
+    type TEXT,
+    gender TEXT,
+    origin TEXT,
+    location TEXT,
+    image TEXT,
+    episodes TEXT,
+    url TEXT,
+    created TEXT,
+    favourite INTEGER AS Boolean NOT NULL
+);
+
+getCharacterById:
+SELECT * FROM CharacterEntity WHERE id = ? LIMIT 1;
+
+getCharacters:
+SELECT * FROM CharacterEntity;
+
+addCharacter:
+INSERT OR IGNORE INTO CharacterEntity VALUES ?;
+
+setFavourite:
+UPDATE CharacterEntity SET favourite = ? WHERE id = ?;
+
+getFavourites:
+SELECT * FROM CharacterEntity WHERE favourite = 1;

@@ -13,3 +13,8 @@ internal fun CharacterLocationDto.toDomain() = CharacterLocation(
     name = name,
     url = url,
 )
+
+internal fun CharacterLocation.toDto() = CharacterLocationDto(
+    name = name,
+    url = url,
+)

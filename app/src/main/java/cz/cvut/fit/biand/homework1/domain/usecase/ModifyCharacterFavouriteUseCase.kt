@@ -9,9 +9,9 @@ class ModifyCharacterFavouriteUseCase internal constructor(
 ) : UseCase<ModifyCharacterFavouriteUseCase.Params, Unit>() {
     override suspend fun doWork(params: Params) {
         if (params.isFavourite) {
-            charactersRepository.addFavourite(params.character)
+            charactersRepository.addFavourite(params.character.id)
         } else {
-            charactersRepository.removeFavourite(params.character)
+            charactersRepository.removeFavourite(params.character.id)
         }
     }
 

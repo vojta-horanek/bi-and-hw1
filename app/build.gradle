@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'com.squareup.sqldelight'
 }
 
 android {
@@ -48,6 +49,12 @@ android {
     }
 }
 
+sqldelight {
+    Database {
+        packageName = "cz.cvut.fit.biand.homework1.infrastructure.database"
+    }
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.9.0'
@@ -80,6 +87,10 @@ dependencies {
 
     implementation "com.google.accompanist:accompanist-placeholder:0.30.0"
     implementation "com.google.accompanist:accompanist-placeholder-material:0.30.0"
+
+    implementation "com.squareup.sqldelight:runtime:1.5.5"
+    implementation "com.squareup.sqldelight:coroutines-extensions:1.5.5"
+    implementation "com.squareup.sqldelight:android-driver:1.5.5"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

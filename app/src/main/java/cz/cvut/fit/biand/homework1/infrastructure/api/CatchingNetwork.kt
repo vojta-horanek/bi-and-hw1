@@ -9,7 +9,6 @@ internal suspend fun <T : Any> catchingNetwork(
 ) = try {
     Result.success(block())
 } catch (e: ClientRequestException) {
-    e.printStackTrace()
     if (defaultValue == null) {
         Result.failure(e)
     } else {
@@ -19,6 +18,5 @@ internal suspend fun <T : Any> catchingNetwork(
         }
     }
 } catch (e: Exception) {
-    e.printStackTrace()
     Result.failure(e)
 }

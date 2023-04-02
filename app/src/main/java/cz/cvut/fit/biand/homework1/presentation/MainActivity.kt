@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 RootLayout(
                     navController = navController,
-                ) { innerPadding ->
+                ) {
                     AppNavigation(
                         navController = navController,
                     )

@@ -3,9 +3,12 @@ package cz.cvut.fit.biand.homework1.presentation.search
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,7 +24,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import cz.cvut.fit.biand.homework1.R
+import cz.cvut.fit.biand.homework1.domain.model.Character
 import cz.cvut.fit.biand.homework1.presentation.common.*
 import cz.cvut.fit.biand.homework1.presentation.navigation.Routes
 import cz.cvut.fit.biand.homework1.presentation.navigation.composableDestination
@@ -55,6 +62,7 @@ internal fun SearchRoute(
     viewModel: SearchViewModel = koinViewModel(),
 ) {
     val state by viewModel.collectState()
+    val characters = viewModel.characters.collectAsLazyPagingItems()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
@@ -67,6 +75,7 @@ internal fun SearchRoute(
         onBackPressed = onBackPressed,
         onCharacterClick = onNavigateToDetail,
         focusRequester = focusRequester,
+        characters = characters,
         onQueryChanged = { query ->
             viewModel.onIntent(SearchViewModel.Intent.OnQueryChanged(query))
         },
@@ -78,7 +87,7 @@ internal fun SearchRoute(
         },
         onRetryClick = {
             viewModel.onIntent(SearchViewModel.Intent.OnRetryClick)
-        }
+        },
     )
 }
 
@@ -86,6 +95,7 @@ internal fun SearchRoute(
 @Composable
 private fun SearchScreen(
     state: SearchViewModel.State,
+    characters: LazyPagingItems<Character>,
     focusRequester: FocusRequester,
     onBackPressed: () -> Unit,
     onCharacterClick: (id: Long) -> Unit,
@@ -132,7 +142,7 @@ private fun SearchScreen(
                             },
                             cursorBrush = SolidColor(MaterialTheme.colors.secondary),
                         )
-                        if (state.isLabelVisible) {
+                        if (state.isSearchLabelVisible) {
                             CompositionLocalProvider(
                                 LocalContentAlpha provides ContentAlpha.medium,
                             ) {
@@ -164,45 +174,85 @@ private fun SearchScreen(
             )
         }
     ) {
-//        LazyPagingItemsScreen(
-//            lazyPagingItems =,
-//            emptyContent =,
-//            errorContent =,
-//            loadingContent =,
-//            appendErrorItem =,
-//            appendLoadingItem =
-//        ) {
-//
-//        }
-
-        ContentErrorLoading(
-            contentState = ContentState.fromState(
-                error = state.error,
-                empty = state.isNoResultsVisible,
-                loading = state.loading,
-            ),
-            errorContent = {
-                Error(
-                    onRetryClick = onRetryClick,
-                )
-            },
-            emptyContent = {
-                Info(text = stringResource(R.string.label_no_characters_found))
-            }
+        AnimatedVisibility(
+            visible = state.isContentVisible,
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            Characters(
-                characters = state.items,
-                onCharacterClick = { id ->
-                    onCharacterClick(id)
-                },
+            LazyPagingItemsScreen(
                 contentPadding = PaddingValues(
                     start = Space.Medium,
                     end = Space.Medium,
                     top = Space.Medium,
-                    bottom = Space.Medium,
+                    bottom = Space.Medium + BottomNavigationHeight
                 ),
-                insideCard = false,
-            )
+                modifier = Modifier
+                    .fillMaxSize(),
+                lazyPagingItems = characters,
+                emptyContent = {
+                    Info(text = stringResource(R.string.label_no_characters))
+                },
+                errorContent = {
+                    Error(
+                        onRetryClick = onRetryClick,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                },
+                loadingContent = { contentPadding ->
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(Space.Medium),
+                        modifier = Modifier
+                            .verticalScroll(
+                                state = rememberScrollState(),
+                                enabled = false,
+                            )
+                            .padding(contentPadding),
+                    ) {
+                        repeat(10) {
+                            CharacterSkeleton(
+                                insideCard = true,
+                            )
+                        }
+                    }
+                },
+                appendErrorItem = {
+                    item {
+                        Error(
+                            onRetryClick = onRetryClick,
+                        )
+                    }
+                },
+                appendLoadingItem = {
+                    items(3) {
+                        CharacterSkeleton(
+                            insideCard = true,
+                        )
+                    }
+                }
+            ) { padding, appendContent ->
+                LazyColumn(
+                    contentPadding = padding,
+                    verticalArrangement = Arrangement.spacedBy(Space.Medium)
+                ) {
+                    items(characters) { character ->
+                        if (character == null) {
+                            return@items
+                        }
+                        Character(
+                            name = character.name.orEmpty(),
+                            status = character.status.orEmpty(),
+                            avatarUri = character.image,
+                            insideCard = true,
+                            isFavourite = character.isFavourite,
+                            onClick = {
+                                onCharacterClick(character.id)
+                            },
+                        )
+                    }
+                    appendContent()
+                }
+            }
         }
     }
 }

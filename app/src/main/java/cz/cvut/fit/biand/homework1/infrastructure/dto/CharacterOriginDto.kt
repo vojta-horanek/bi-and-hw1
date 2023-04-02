@@ -13,3 +13,8 @@ internal fun CharacterOriginDto.toDomain() = CharacterOrigin(
     name = name,
     url = url,
 )
+
+internal fun CharacterOrigin.toDto() = CharacterOriginDto(
+    name = name,
+    url = url,
+)

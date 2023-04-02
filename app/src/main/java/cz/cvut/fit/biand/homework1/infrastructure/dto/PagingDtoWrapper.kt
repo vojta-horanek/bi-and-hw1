@@ -8,12 +8,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal open class PagingDtoWrapper<Type : Any> {
-    val results: List<Type> = listOf()
-    val info: PaginationDto = PaginationDto(0, 0, null, null)
+    private val results: List<Type> = listOf()
+    private val info: PaginationDto = PaginationDto(0, 0, null, null)
 
-    /**
-     * @return a domain paging wrapper. The data is mapped using the [typeMapper] lambda.
-     */
+
     fun <DomainType> toDomain(typeMapper: (Type) -> DomainType): PagingWrapper<DomainType> =
         PagingWrapper(results.map(typeMapper), info.toDomain())
 }

@@ -17,19 +17,20 @@ abstract class IntentViewModel<State : VmState, Intent : VmIntent>(
         reduceState = ::reduceState,
     )
 
+    /**
+     * The current value of the state. Usage of this should be minimised.
+     */
+    protected val currentState = stateFlow.value
+
     @Composable
     fun collectState() = stateFlow.collectAsState()
 
     fun onIntent(intent: Intent) = stateFlow.handleIntent(intent)
 
     private fun reduceState(state: State, intent: Intent): State =
-        state.applyIntent(intent).also { nextState ->
-            onStateUpdate(state, nextState)
-        }
+        state.applyIntent(intent)
 
     protected abstract fun State.applyIntent(intent: Intent): State
-
-    open fun onStateUpdate(previousState: State, nextState: State) {}
 }
 
 /**

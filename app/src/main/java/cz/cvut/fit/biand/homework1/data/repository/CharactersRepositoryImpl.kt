@@ -15,22 +15,29 @@ internal class CharactersRepositoryImpl(
             val favourites = localSource.getFavouriteCharacters()
                 .map { it.id }
                 .toSet()
+            localSource.addCharacters(wrapper.list)
             wrapper.map { it.copy(isFavourite = it.id in favourites) }
         }
 
-    override suspend fun getCharacter(id: Long) = remoteSource.getCharacter(id).map {
-        val favourites = localSource.getFavouriteCharacters()
-            .map { favourite -> favourite.id }
-            .toSet()
-        it.copy(isFavourite = it.id in favourites)
+    override suspend fun getCharacter(id: Long): Result<Character> {
+        val localCharacter = localSource.getCharacterById(id)
+        if (localCharacter != null) {
+            return Result.success(localCharacter)
+        }
+        return remoteSource.getCharacter(id).map {
+            val favourites = localSource.getFavouriteCharacters()
+                .map { favourite -> favourite.id }
+                .toSet()
+            it.copy(isFavourite = it.id in favourites)
+        }
     }
 
     override suspend fun getFavouriteCharacters(): Result<List<Character>> =
-        Result.success(localSource.getFavouriteCharacters().toList())
+        Result.success(localSource.getFavouriteCharacters())
 
-    override suspend fun addFavourite(character: Character) =
-        localSource.addFavourite(character)
+    override suspend fun addFavourite(id: Long) =
+        localSource.addFavourite(id)
 
-    override suspend fun removeFavourite(character: Character) =
-        localSource.removeFavourite(character)
+    override suspend fun removeFavourite(id: Long) =
+        localSource.removeFavourite(id)
 }

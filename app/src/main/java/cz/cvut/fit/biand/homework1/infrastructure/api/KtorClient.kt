@@ -13,18 +13,6 @@ import kotlinx.serialization.json.Json
 @OptIn(ExperimentalSerializationApi::class)
 object KtorClient {
     fun create() = HttpClient(CIO) {
-        expectSuccess = true
-        install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-                explicitNulls = true
-                encodeDefaults = true
-            })
-        }
-        install(Logging) {
-            logger = Logger.DEFAULT
-            level = LogLevel.INFO
-        }
         defaultRequest {
             url {
                 protocol = URLProtocol.HTTPS
@@ -32,6 +20,23 @@ object KtorClient {
                 path("api/")
             }
             contentType(ContentType.Application.Json)
+        }
+
+        expectSuccess = true
+
+        install(ContentNegotiation) {
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                    explicitNulls = true
+                    encodeDefaults = true
+                }
+            )
+        }
+
+        install(Logging) {
+            logger = Logger.DEFAULT
+            level = LogLevel.INFO
         }
     }
 }

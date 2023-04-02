@@ -105,7 +105,7 @@ private fun OverviewScreen(
                 .fillMaxSize(),
             lazyPagingItems = characters,
             emptyContent = {
-                Info(text = stringResource(R.string.label_no_characters),)
+                Info(text = stringResource(R.string.label_no_characters))
             },
             errorContent = {
                 Error(

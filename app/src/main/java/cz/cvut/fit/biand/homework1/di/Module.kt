@@ -12,6 +12,8 @@ import cz.cvut.fit.biand.homework1.domain.usecase.ModifyCharacterFavouriteUseCas
 import cz.cvut.fit.biand.homework1.infrastructure.api.CharactersApi
 import cz.cvut.fit.biand.homework1.infrastructure.api.CharactersApiImpl
 import cz.cvut.fit.biand.homework1.infrastructure.api.KtorClient
+import cz.cvut.fit.biand.homework1.infrastructure.database.createDatabase
+import cz.cvut.fit.biand.homework1.infrastructure.database.createSqlDriver
 import cz.cvut.fit.biand.homework1.infrastructure.source.CharactersLocalSourceImpl
 import cz.cvut.fit.biand.homework1.infrastructure.source.CharactersRemoteSourceImpl
 import cz.cvut.fit.biand.homework1.presentation.common.CharactersPagingSource
@@ -19,6 +21,7 @@ import cz.cvut.fit.biand.homework1.presentation.detail.DetailViewModel
 import cz.cvut.fit.biand.homework1.presentation.favourite.FavouritesViewModel
 import cz.cvut.fit.biand.homework1.presentation.overview.OverviewViewModel
 import cz.cvut.fit.biand.homework1.presentation.search.SearchViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -32,6 +35,11 @@ val networkModule = module {
 }
 
 val infrastructureModule = module {
+    single {
+        createDatabase(
+            driver = createSqlDriver(androidContext())
+        )
+    }
     singleOf(::CharactersRemoteSourceImpl) bind CharactersRemoteSource::class
     singleOf(::CharactersLocalSourceImpl) bind CharactersLocalSource::class
 }
