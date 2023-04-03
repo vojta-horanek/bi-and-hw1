@@ -68,7 +68,7 @@ internal class DetailViewModel(
 
     data class State(
         val id: Long? = null,
-        val loading: Boolean = true,
+        val loading: Boolean = false, // So fast showing a loading actually makes the UX worse
         val character: Character? = null,
         val error: Throwable? = null,
     ) : VmState {

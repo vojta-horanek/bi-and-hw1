@@ -1,0 +1,15 @@
+CREATE TABLE Favourite (
+    favouriteId INTEGER PRIMARY KEY NOT NULL
+);
+
+getFavourites:
+SELECT * FROM Favourite;
+
+getFavouriteById:
+SELECT * FROM Favourite WHERE favouriteId = ?;
+
+addFavourite:
+INSERT OR IGNORE INTO Favourite VALUES ?;
+
+removeFavourite:
+DELETE FROM Favourite WHERE favouriteId = ?;

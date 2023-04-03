@@ -2,9 +2,13 @@ package cz.cvut.fit.biand.homework1.infrastructure.source
 
 import cz.cvut.fit.biand.homework1.data.source.CharactersLocalSource
 import cz.cvut.fit.biand.homework1.domain.model.Character
-import cz.cvut.fit.biand.homework1.infrastructure.database.Database
-import cz.cvut.fit.biand.homework1.infrastructure.entity.toDomain
+import cz.cvut.fit.biand.homework1.infrastructure.database.*
+import cz.cvut.fit.biand.homework1.infrastructure.dto.CharacterLocationDto
+import cz.cvut.fit.biand.homework1.infrastructure.dto.CharacterOriginDto
+import cz.cvut.fit.biand.homework1.infrastructure.dto.toDomain
 import cz.cvut.fit.biand.homework1.infrastructure.entity.toEntity
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 internal class CharactersLocalSourceImpl(
     private val database: Database,
@@ -45,19 +49,76 @@ internal class CharactersLocalSourceImpl(
 
     override suspend fun addFavourite(id: Long) {
         database
-            .characterQueries
-            .setFavourite(
-                favourite = true,
-                id = id,
+            .favouriteQueries
+            .addFavourite(
+                Favourite(
+                    favouriteId = id,
+                ),
             )
     }
 
     override suspend fun removeFavourite(id: Long) {
         database
-            .characterQueries
-            .setFavourite(
-                favourite = false,
-                id = id,
+            .favouriteQueries
+            .removeFavourite(
+                favouriteId = id,
             )
     }
+
+    private fun GetCharacterById.toDomain() = Character(
+        id = id,
+        name = name,
+        status = status,
+        species = species,
+        type = type,
+        gender = gender,
+        origin = origin?.asOrigin(),
+        location = location?.asLocation(),
+        image = image,
+        episodes = episodes?.asEpisodes() ?: emptyList(),
+        url = url,
+        created = created,
+        isFavourite = favouriteId != null,
+    )
+
+    private fun GetCharacters.toDomain() = Character(
+        id = id,
+        name = name,
+        status = status,
+        species = species,
+        type = type,
+        gender = gender,
+        origin = origin?.asOrigin(),
+        location = location?.asLocation(),
+        image = image,
+        episodes = episodes?.asEpisodes() ?: emptyList(),
+        url = url,
+        created = created,
+        isFavourite = favouriteId != null,
+    )
+
+    private fun GetFavourites.toDomain() = Character(
+        id = id,
+        name = name,
+        status = status,
+        species = species,
+        type = type,
+        gender = gender,
+        origin = origin.asOrigin(),
+        location = location.asLocation(),
+        image = image,
+        episodes = episodes.asEpisodes(),
+        url = url,
+        created = created,
+        isFavourite = true,
+    )
+
+    private fun String?.asOrigin() =
+        this?.let { Json.decodeFromString<CharacterOriginDto>(it).toDomain() }
+
+    private fun String?.asLocation() =
+        this?.let { Json.decodeFromString<CharacterLocationDto>(it).toDomain() }
+
+    private fun String?.asEpisodes(): List<String> =
+        this?.let { Json.decodeFromString(it) } ?: emptyList()
 }

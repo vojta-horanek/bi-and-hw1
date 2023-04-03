@@ -1,8 +1,11 @@
 package cz.cvut.fit.biand.homework1.presentation.favourite
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,21 +94,55 @@ private fun FavouritesScreen(
             },
             emptyContent = {
                 Info(text = stringResource(R.string.label_no_favourites))
+            },
+            loadingContent = {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(
+                            state = rememberScrollState(),
+                            enabled = false,
+                        )
+                        .padding(
+                            start = Space.Medium,
+                            end = Space.Medium,
+                            top = Space.Medium,
+                            bottom = Space.Medium + BottomNavigationHeight
+                        ),
+                    verticalArrangement = Arrangement.spacedBy(Space.Medium),
+                ) {
+                    repeat(10) {
+                        CharacterSkeleton(insideCard = true)
+                    }
+                }
             }
         ) {
-            Characters(
-                characters = state.items,
-                onCharacterClick = { id ->
-                    onCharacterClick(id)
-                },
+            LazyColumn(
                 contentPadding = PaddingValues(
                     start = Space.Medium,
                     end = Space.Medium,
                     top = Space.Medium,
                     bottom = Space.Medium + BottomNavigationHeight
                 ),
-                insideCard = true,
-            )
+                verticalArrangement = Arrangement.spacedBy(Space.Medium)
+            ) {
+                items(
+                    items = state.items,
+                    key = {
+                        it.id
+                    },
+                ) { character ->
+                    Character(
+                        name = character.name.orEmpty(),
+                        status = character.status.orEmpty(),
+                        avatarUri = character.image,
+                        insideCard = true,
+                        isFavourite = character.isFavourite,
+                        onClick = {
+                            onCharacterClick(character.id)
+                        },
+                    )
+                }
+            }
         }
     }
 }

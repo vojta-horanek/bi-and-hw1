@@ -150,7 +150,12 @@ private fun OverviewScreen(
                 contentPadding = padding,
                 verticalArrangement = Arrangement.spacedBy(Space.Medium)
             ) {
-                items(characters) { character ->
+                items(
+                    items = characters,
+                    key = {
+                        it.id
+                    },
+                ) { character ->
                     if (character == null) {
                         return@items
                     }

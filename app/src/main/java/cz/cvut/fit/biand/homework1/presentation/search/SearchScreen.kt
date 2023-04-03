@@ -181,10 +181,7 @@ private fun SearchScreen(
         ) {
             LazyPagingItemsScreen(
                 contentPadding = PaddingValues(
-                    start = Space.Medium,
-                    end = Space.Medium,
-                    top = Space.Medium,
-                    bottom = Space.Medium + BottomNavigationHeight
+                    all = Space.Medium,
                 ),
                 modifier = Modifier
                     .fillMaxSize(),
@@ -211,7 +208,7 @@ private fun SearchScreen(
                     ) {
                         repeat(10) {
                             CharacterSkeleton(
-                                insideCard = true,
+                                insideCard = false,
                             )
                         }
                     }
@@ -226,7 +223,7 @@ private fun SearchScreen(
                 appendLoadingItem = {
                     items(3) {
                         CharacterSkeleton(
-                            insideCard = true,
+                            insideCard = false,
                         )
                     }
                 }
@@ -235,7 +232,12 @@ private fun SearchScreen(
                     contentPadding = padding,
                     verticalArrangement = Arrangement.spacedBy(Space.Medium)
                 ) {
-                    items(characters) { character ->
+                    items(
+                        items = characters,
+                        key = {
+                            it.id
+                        },
+                    ) { character ->
                         if (character == null) {
                             return@items
                         }
@@ -243,7 +245,7 @@ private fun SearchScreen(
                             name = character.name.orEmpty(),
                             status = character.status.orEmpty(),
                             avatarUri = character.image,
-                            insideCard = true,
+                            insideCard = false,
                             isFavourite = character.isFavourite,
                             onClick = {
                                 onCharacterClick(character.id)
