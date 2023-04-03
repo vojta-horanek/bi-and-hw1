@@ -187,7 +187,7 @@ private fun SearchScreen(
                     .fillMaxSize(),
                 lazyPagingItems = characters,
                 emptyContent = {
-                    Info(text = stringResource(R.string.label_no_characters))
+                    Info(text = stringResource(R.string.label_no_characters_found))
                 },
                 errorContent = {
                     Error(

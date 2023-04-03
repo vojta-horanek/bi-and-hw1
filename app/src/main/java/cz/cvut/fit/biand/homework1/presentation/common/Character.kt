@@ -12,12 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.google.accompanist.placeholder.material.placeholder
 import cz.cvut.fit.biand.homework1.R
-import cz.cvut.fit.biand.homework1.presentation.theme.AppTheme
 import cz.cvut.fit.biand.homework1.presentation.theme.Space
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -86,7 +84,7 @@ fun Character(
     if (insideCard) {
         Card(
             onClick = onClick,
-            elevation = 4.dp,
+            elevation = CardElevation,
             modifier = modifier
                 .fillMaxWidth(),
         ) {
@@ -156,7 +154,7 @@ fun CharacterSkeleton(
 
     if (insideCard) {
         Card(
-            elevation = 4.dp,
+            elevation = CardElevation,
             modifier = modifier
                 .fillMaxWidth(),
         ) {
@@ -172,35 +170,6 @@ fun CharacterSkeleton(
     }
 }
 
-@Preview
-@Composable
-private fun CharacterPreview() {
-    AppTheme {
-        Character(
-            name = "Rick Sanchez",
-            status = "Alive",
-            avatarUri = "https://static.wikia.nocookie.net/rickandmorty/images/a/a6/Rick_Sanchez.png/revision/latest?cb=20160923150728",
-            isFavourite = false,
-            onClick = { },
-            insideCard = true,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun CharacterPreviewFavorite() {
-    AppTheme {
-        Character(
-            name = "Rick Sanchez",
-            status = "Alive",
-            avatarUri = "https://static.wikia.nocookie.net/rickandmorty/images/a/a6/Rick_Sanchez.png/revision/latest?cb=20160923150728",
-            isFavourite = true,
-            onClick = { },
-            insideCard = false,
-        )
-    }
-}
-
 private val AvatarSize = 44.dp
 private val FavouriteSize = 14.dp
+private val CardElevation = 4.dp

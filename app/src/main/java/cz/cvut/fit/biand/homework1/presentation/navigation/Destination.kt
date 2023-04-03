@@ -8,37 +8,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 
-/**
- * Base class for any destination the app uses.
- * This should be used as a parent for a sealed class which corresponds to some nav graph
- */
 abstract class Destination {
-    /**
-     * The id of the destination, without nav arguments.
-     */
     protected abstract val destinationId: String
     open val arguments: List<NamedNavArgument> = emptyList()
 
-    /**
-     * Route used to determine this destination from others. Do not use for navigating.
-     */
     val route
         get() = constructRoute()
 
-    /**
-     * Creates a navigate-able route with the [arguments] provided.
-     * @param arguments Arguments that should be used for this destination. The number and order of arguments
-     * must exactly match the number and order of arguments this destination requires. For a default value, use null.
-     */
     operator fun invoke(vararg arguments: Any?) = constructRouteForNavigation(*arguments)
 
-    /**
-     * Constructs a route with argument names in the following format:
-     * - e.g. Destination called `detail` with arguments named `id` and `name`:
-     *      "detail?id={id}&name={name}"
-     * - e.g. Destination called `home` with no arguments:
-     *      "home"
-     */
     private fun constructRoute() = createUri(
         path = destinationId,
         argList = arguments,
@@ -46,13 +24,6 @@ abstract class Destination {
         value = { "{${it.name}}" },
     )
 
-    /**
-     * Constructs a route with argument names in the following format:
-     * - e.g. Destination called `detail` with arguments named `id` = 5 and `name` = "test":
-     *      "detail?id=5&name=test"
-     * - e.g. Destination called `home` with no arguments:
-     *      "home"
-     */
     private fun constructRouteForNavigation(
         vararg routeArguments: Any?,
     ): String {
@@ -95,15 +66,6 @@ fun NavGraphBuilder.composableDestination(
     destination: Destination,
     content: @Composable (NavBackStackEntry) -> Unit,
 ) = composable(
-    route = destination.route,
-    arguments = destination.arguments,
-    content = content,
-)
-
-fun NavGraphBuilder.dialogDestination(
-    destination: Destination,
-    content: @Composable (NavBackStackEntry) -> Unit,
-) = dialog(
     route = destination.route,
     arguments = destination.arguments,
     content = content,

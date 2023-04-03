@@ -73,7 +73,7 @@ fun BottomNavigation(
     ) {
         Surface(
             color = MaterialTheme.colors.surface,
-            elevation = 16.dp, // TODO: Check
+            elevation = BottomNavigationElevation,
             modifier = modifier,
             shape = MaterialTheme.shapes.medium.copy(
                 bottomStart = ZeroCornerSize,
@@ -135,4 +135,5 @@ private data class BottomSheetItem(
 )
 
 val BottomNavigationHeight = 56.dp
+val BottomNavigationElevation = 8.dp
 private val IconSize = 24.dp
