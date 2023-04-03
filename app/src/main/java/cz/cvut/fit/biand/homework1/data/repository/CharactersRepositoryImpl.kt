@@ -5,6 +5,8 @@ import cz.cvut.fit.biand.homework1.data.source.CharactersRemoteSource
 import cz.cvut.fit.biand.homework1.domain.model.Character
 import cz.cvut.fit.biand.homework1.domain.model.map
 import cz.cvut.fit.biand.homework1.domain.repository.CharactersRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 
 internal class CharactersRepositoryImpl(
     private val remoteSource: CharactersRemoteSource,
@@ -19,18 +21,33 @@ internal class CharactersRepositoryImpl(
             wrapper.map { it.copy(isFavourite = it.id in favourites) }
         }
 
-    override suspend fun getCharacter(id: Long): Result<Character> {
-        val localCharacter = localSource.getCharacterById(id)
-        if (localCharacter != null) {
-            return Result.success(localCharacter)
-        }
-        return remoteSource.getCharacter(id).map {
-            val favourites = localSource.getFavouriteCharacters()
-                .map { favourite -> favourite.id }
-                .toSet()
-            it.copy(isFavourite = it.id in favourites)
-        }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override suspend fun getCharacter(id: Long): Flow<Result<Character>> = flow {
+        localSource
+            .getCharacterById(id)
+            .flatMapLatest { character ->
+                flow {
+                    if (character == null) {
+                        val remote = getCharacterFromRemote(id)
+                            .onSuccess {
+                                localSource.addCharacters(listOf(it))
+                            }
+                        emit(remote)
+                    } else {
+                        emit(Result.success(character))
+                    }
+                }
+            }
+            .collect(this)
     }
+
+    private suspend fun getCharacterFromRemote(id: Long) = remoteSource.getCharacter(id).map {
+        val favourites = localSource.getFavouriteCharacters()
+            .map { favourite -> favourite.id }
+            .toSet()
+        it.copy(isFavourite = it.id in favourites)
+    }
+
 
     override suspend fun getFavouriteCharacters(): Result<List<Character>> =
         Result.success(localSource.getFavouriteCharacters())

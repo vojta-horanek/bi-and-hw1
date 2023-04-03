@@ -124,7 +124,7 @@ private fun OverviewScreen(
                         )
                         .padding(contentPadding),
                 ) {
-                    repeat(10) {
+                    repeat(20) {
                         CharacterSkeleton(
                             insideCard = true,
                         )

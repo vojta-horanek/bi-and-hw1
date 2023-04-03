@@ -206,7 +206,7 @@ private fun SearchScreen(
                             )
                             .padding(contentPadding),
                     ) {
-                        repeat(10) {
+                        repeat(20) {
                             CharacterSkeleton(
                                 insideCard = false,
                             )

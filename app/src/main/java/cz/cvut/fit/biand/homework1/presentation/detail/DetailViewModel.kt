@@ -7,12 +7,16 @@ import cz.cvut.fit.biand.homework1.domain.usecase.ModifyCharacterFavouriteUseCas
 import cz.cvut.fit.biand.homework1.presentation.common.IntentViewModel
 import cz.cvut.fit.biand.homework1.presentation.common.VmIntent
 import cz.cvut.fit.biand.homework1.presentation.common.VmState
+import cz.cvut.fit.biand.homework1.presentation.common.intentFlow
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 internal class DetailViewModel(
     private val getCharacter: GetCharacterByIdUseCase,
     private val modifyCharacterFavourite: ModifyCharacterFavouriteUseCase,
 ) : IntentViewModel<DetailViewModel.State, DetailViewModel.Intent>(State()) {
+
+    private var characterJob: Job? = null
 
     override fun State.applyIntent(intent: Intent) = when (intent) {
         is OnCharacterLoaded -> copy(loading = false, character = intent.character, error = null)
@@ -47,14 +51,24 @@ internal class DetailViewModel(
             )
         }
 
-    private fun loadCharacter(id: Long) = viewModelScope.launch {
-        getCharacter(id)
-            .onSuccess { character ->
-                onIntent(OnCharacterLoaded(character))
+    private fun loadCharacter(id: Long) {
+        characterJob?.cancel()
+        characterJob = intentFlow(
+            producer = {
+                getCharacter(id)
+            },
+            intent = { result ->
+                result
+                    .fold(
+                        onSuccess = {
+                            OnCharacterLoaded(it)
+                        },
+                        onFailure = {
+                            OnError(it)
+                        }
+                    )
             }
-            .onFailure { error ->
-                onIntent(OnError(error))
-            }
+        )
     }
 
     sealed interface Intent : VmIntent {

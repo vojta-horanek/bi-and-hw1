@@ -110,7 +110,7 @@ private fun FavouritesScreen(
                         ),
                     verticalArrangement = Arrangement.spacedBy(Space.Medium),
                 ) {
-                    repeat(10) {
+                    repeat(20) {
                         CharacterSkeleton(insideCard = true)
                     }
                 }

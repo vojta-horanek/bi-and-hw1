@@ -1,5 +1,7 @@
 package cz.cvut.fit.biand.homework1.infrastructure.source
 
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import cz.cvut.fit.biand.homework1.data.source.CharactersLocalSource
 import cz.cvut.fit.biand.homework1.domain.model.Character
 import cz.cvut.fit.biand.homework1.infrastructure.database.*
@@ -7,17 +9,22 @@ import cz.cvut.fit.biand.homework1.infrastructure.dto.CharacterLocationDto
 import cz.cvut.fit.biand.homework1.infrastructure.dto.CharacterOriginDto
 import cz.cvut.fit.biand.homework1.infrastructure.dto.toDomain
 import cz.cvut.fit.biand.homework1.infrastructure.entity.toEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 internal class CharactersLocalSourceImpl(
     private val database: Database,
 ) : CharactersLocalSource {
-    override suspend fun getCharacterById(id: Long): Character? {
+    override suspend fun getCharacterById(id: Long): Flow<Character?> {
         return database.characterQueries
             .getCharacterById(id)
-            .executeAsOneOrNull()
-            ?.toDomain()
+            .asFlow()
+            .mapToOneOrNull()
+            .map {
+                it?.toDomain()
+            }
     }
 
     override suspend fun getCharacters(): List<Character> {

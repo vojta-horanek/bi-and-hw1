@@ -2,6 +2,7 @@ package cz.cvut.fit.biand.homework1.domain.repository
 
 import cz.cvut.fit.biand.homework1.domain.model.Character
 import cz.cvut.fit.biand.homework1.domain.model.PagingWrapper
+import kotlinx.coroutines.flow.Flow
 
 internal interface CharactersRepository {
     suspend fun getCharacters(
@@ -11,7 +12,7 @@ internal interface CharactersRepository {
 
     suspend fun getCharacter(
         id: Long,
-    ): Result<Character>
+    ): Flow<Result<Character>>
 
     suspend fun getFavouriteCharacters(): Result<List<Character>>
 

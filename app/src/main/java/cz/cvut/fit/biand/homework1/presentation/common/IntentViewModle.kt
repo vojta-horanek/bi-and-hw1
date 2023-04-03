@@ -51,6 +51,4 @@ interface VmIntent
 fun <T : Any, State : VmState, Intent : VmIntent> IntentViewModel<State, Intent>.intentFlow(
     producer: suspend () -> Flow<T>,
     intent: (T) -> Intent
-) {
-    viewModelScope.launch { producer().collect { onIntent(intent(it)) } }
-}
+) = viewModelScope.launch { producer().collect { onIntent(intent(it)) } }
